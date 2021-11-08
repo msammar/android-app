@@ -198,9 +198,6 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
             try {
                 final X509Certificate x509 = chain[0];
-
-                AlertDialog.Builder adb = new AlertDialog.Builder(MumlaActivity.this);
-                adb.setTitle(R.string.untrusted_certificate);
                 View layout = getLayoutInflater().inflate(R.layout.certificate_info, null);
                 TextView text = layout.findViewById(R.id.certificate_info_text);
                 try {
@@ -219,12 +216,8 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                             hexDigest2.substring(0, hexDigest2.length() - 1)));
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
-                    adb.setMessage(x509.toString());
+
                 }
-                adb.setView(layout);
-                adb.setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
                         // Try to add to trust store
                         try {
                             String alias = lastServer.getHost();
@@ -237,21 +230,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                             e.printStackTrace();
                             Toast.makeText(MumlaActivity.this, R.string.trust_add_failed, Toast.LENGTH_LONG).show();
                         }
-                    }
-                });
-                adb.setNegativeButton(R.string.wizard_cancel, null);
-                adb.show();
             } catch (CertificateException e) {
                 e.printStackTrace();
             }
-        }
-
-        @Override
-        public void onPermissionDenied(String reason) {
-            AlertDialog.Builder adb = new AlertDialog.Builder(MumlaActivity.this);
-            adb.setTitle(R.string.perm_denied);
-            adb.setMessage(reason);
-            adb.show();
         }
     };
 
@@ -343,8 +324,6 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
         setVolumeControlStream(mSettings.isHandsetMode() ?
                 AudioManager.STREAM_VOICE_CALL : AudioManager.STREAM_MUSIC);
-
-        if(mSettings.isFirstRun()) showSetupWizard();
     }
 
     @Override
@@ -452,55 +431,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     }
 
     @Override
-    public void onBackPressed() {
-        if(mService != null && mService.isConnected()) {
-            mDisconnectPromptBuilder.setMessage(getString(R.string.disconnectSure,
-                    mService.getTargetServer().getName()));
-            mDisconnectPromptBuilder.show();
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mDrawerLayout.closeDrawers();
         loadDrawerFragment((int) id);
-    }
-
-    /**
-     * Shows a nice looking setup wizard to guide the user through the app's settings.
-     * Will do nothing if it isn't the first launch.
-     */
-    private void showSetupWizard() {
-        // Prompt the user to generate a certificate.
-        if(mSettings.isUsingCertificate()) return;
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle(R.string.first_run_generate_certificate_title);
-        String msg = getString(R.string.first_run_generate_certificate);
-        if (BuildConfig.FLAVOR.equals("donation")) {
-            msg = getString(R.string.donation_thanks) + "\n\n" + msg;
-        }
-        adb.setMessage(msg);
-        adb.setPositiveButton(R.string.generate, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                MumlaCertificateGenerateTask generateTask = new MumlaCertificateGenerateTask(MumlaActivity.this) {
-                    @Override
-                    protected void onPostExecute(DatabaseCertificate result) {
-                        super.onPostExecute(result);
-                        if(result != null) mSettings.setDefaultCertificateId(result.getId());
-                    }
-                };
-                generateTask.execute();
-            }
-        });
-        adb.show();
-        mSettings.setFirstRun(false);
-
-        // TODO: finish wizard
-//        Intent intent = new Intent(this, WizardActivity.class);
-//        startActivity(intent);
     }
 
     /**
