@@ -128,7 +128,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     private AlertDialog mErrorDialog;
     private AlertDialog.Builder mDisconnectPromptBuilder;
 
-    /** List of fragments to be notified about service state changes. */
+    /**
+     * List of fragments to be notified about service state changes.
+     */
     private List<HumlaServiceFragment> mServiceFragments = new ArrayList<HumlaServiceFragment>();
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -140,11 +142,11 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
             mService.clearChatNotifications(); // Clear chat notifications on resume.
             mDrawerAdapter.notifyDataSetChanged();
 
-            for(HumlaServiceFragment fragment : mServiceFragments)
+            for (HumlaServiceFragment fragment : mServiceFragments)
                 fragment.setServiceBound(true);
 
             // Re-show server list if we're showing a fragment that depends on the service.
-            if(getSupportFragmentManager().findFragmentById(R.id.content_frame) instanceof HumlaServiceFragment &&
+            if (getSupportFragmentManager().findFragmentById(R.id.content_frame) instanceof HumlaServiceFragment &&
                     !mService.isConnected()) {
                 loadDrawerFragment(DrawerAdapter.ITEM_FAVOURITES);
             }
@@ -180,7 +182,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         @Override
         public void onDisconnected(HumlaException e) {
             // Re-show server list if we're showing a fragment that depends on the service.
-            if(getSupportFragmentManager().findFragmentById(R.id.content_frame) instanceof HumlaServiceFragment) {
+            if (getSupportFragmentManager().findFragmentById(R.id.content_frame) instanceof HumlaServiceFragment) {
                 loadDrawerFragment(DrawerAdapter.ITEM_FAVOURITES);
             }
             mDrawerAdapter.notifyDataSetChanged();
@@ -218,18 +220,18 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                     e.printStackTrace();
 
                 }
-                        // Try to add to trust store
-                        try {
-                            String alias = lastServer.getHost();
-                            KeyStore trustStore = MumlaTrustStore.getTrustStore(MumlaActivity.this);
-                            trustStore.setCertificateEntry(alias, x509);
-                            MumlaTrustStore.saveTrustStore(MumlaActivity.this, trustStore);
-                            Toast.makeText(MumlaActivity.this, R.string.trust_added, Toast.LENGTH_LONG).show();
-                            connectToServer(lastServer);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(MumlaActivity.this, R.string.trust_add_failed, Toast.LENGTH_LONG).show();
-                        }
+                // Try to add to trust store
+                try {
+                    String alias = lastServer.getHost();
+                    KeyStore trustStore = MumlaTrustStore.getTrustStore(MumlaActivity.this);
+                    trustStore.setCertificateEntry(alias, x509);
+                    MumlaTrustStore.saveTrustStore(MumlaActivity.this, trustStore);
+                    Toast.makeText(MumlaActivity.this, R.string.trust_added, Toast.LENGTH_LONG).show();
+                    connectToServer(lastServer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(MumlaActivity.this, R.string.trust_add_failed, Toast.LENGTH_LONG).show();
+                }
             } catch (CertificateException e) {
                 e.printStackTrace();
             }
@@ -289,14 +291,14 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         dadb.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(mService != null) mService.disconnect();
+                if (mService != null) mService.disconnect();
                 loadDrawerFragment(DrawerAdapter.ITEM_FAVOURITES);
             }
         });
         dadb.setNegativeButton(android.R.string.cancel, null);
         mDisconnectPromptBuilder = dadb;
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().hasExtra(EXTRA_DRAWER_FRAGMENT)) {
                 loadDrawerFragment(getIntent().getIntExtra(EXTRA_DRAWER_FRAGMENT,
                         DrawerAdapter.ITEM_FAVOURITES));
@@ -306,7 +308,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         }
 
         // If we're given a Mumble URL to show, open up a server edit fragment.
-        if(getIntent() != null &&
+        if (getIntent() != null &&
                 Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             String url = getIntent().getDataString();
             try {
@@ -347,7 +349,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         if (mConnectingDialog != null)
             mConnectingDialog.dismiss();
 
-        if(mService != null) {
+        if (mService != null) {
             for (HumlaServiceFragment fragment : mServiceFragments) {
                 fragment.setServiceBound(false);
             }
@@ -372,11 +374,11 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
         // Color the action bar icons to the primary text color of the theme.
         int foregroundColor = getSupportActionBar().getThemedContext()
-                .obtainStyledAttributes(new int[] { android.R.attr.textColor })
+                .obtainStyledAttributes(new int[]{android.R.attr.textColor})
                 .getColor(0, -1);
-        for(int x=0;x<menu.size();x++) {
+        for (int x = 0; x < menu.size(); x++) {
             MenuItem item = menu.getItem(x);
-            if(item.getIcon() != null) {
+            if (item.getIcon() != null) {
                 Drawable icon = item.getIcon().mutate(); // Mutate the icon so that the color filter is exclusive to the action bar
                 icon.setColorFilter(foregroundColor, PorterDuff.Mode.MULTIPLY);
             }
@@ -394,7 +396,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(mDrawerToggle.onOptionsItemSelected(item))
+        if (mDrawerToggle.onOptionsItemSelected(item))
             return true;
 
         switch (item.getItemId()) {
@@ -474,9 +476,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         }
         Fragment fragment = Fragment.instantiate(this, fragmentClass.getName(), args);
         getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, fragment, fragmentClass.getName())
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit();
+                .replace(R.id.content_frame, fragment, fragmentClass.getName())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
         setTitle(mDrawerAdapter.getItemWithId(fragmentId).title);
     }
 
@@ -494,7 +496,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         }
 
         // Check if we're already connected to a server; if so, inform user.
-        if(mService != null && mService.isConnected()) {
+        if (mService != null && mService.isConnected()) {
             AlertDialog.Builder adb = new AlertDialog.Builder(this);
             adb.setMessage(R.string.reconnect_dialog_message);
             adb.setPositiveButton(R.string.connect, new DialogInterface.OnClickListener() {
@@ -558,8 +560,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
             thread.start();
             thread.join();
             return open.get();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.d(TAG, "isPortOpen() " + e);
         }
         return false;
@@ -599,7 +600,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 PublicServer newServer = server;
-                if(!usernameField.getText().toString().equals(""))
+                if (!usernameField.getText().toString().equals(""))
                     newServer.setUsername(usernameField.getText().toString());
                 else
                     newServer.setUsername(settings.getDefaultUsername());
@@ -623,6 +624,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
      * Will show reconnecting dialog if reconnecting, dismiss otherwise, etc.
      * Basically, this service will do catch-up if the activity wasn't bound to receive
      * connection state updates.
+     *
      * @param service A bound IHumlaService.
      */
     private void updateConnectionState(IHumlaService service) {
@@ -675,9 +677,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                             }
                         });
                     } else if (error != null &&
-                               error.getReason() == HumlaException.HumlaDisconnectReason.REJECT &&
-                               (error.getReject().getType() == Mumble.Reject.RejectType.WrongUserPW ||
-                                error.getReject().getType() == Mumble.Reject.RejectType.WrongServerPW)) {
+                            error.getReason() == HumlaException.HumlaDisconnectReason.REJECT &&
+                            (error.getReject().getType() == Mumble.Reject.RejectType.WrongUserPW ||
+                                    error.getReject().getType() == Mumble.Reject.RejectType.WrongServerPW)) {
                         final EditText passwordField = new EditText(this);
                         passwordField.setInputType(InputType.TYPE_CLASS_TEXT |
                                 InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -751,7 +753,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(Settings.PREF_THEME.equals(key)) {
+        if (Settings.PREF_THEME.equals(key)) {
             // Recreate activity when theme is changed
             recreate();
         } else if (Settings.PREF_STAY_AWAKE.equals(key)) {
@@ -769,7 +771,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public String getConnectedServerName() {
-        if(mService != null && mService.isConnected()) {
+        if (mService != null && mService.isConnected()) {
             Server server = mService.getTargetServer();
             return server.getName().equals("") ? server.getHost() : server.getName();
         }
