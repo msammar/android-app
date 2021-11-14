@@ -17,6 +17,8 @@
 
 package se.lublin.mumla.app;
 
+import static se.lublin.mumla.Constants.TAG;
+
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -30,7 +32,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
@@ -85,12 +89,10 @@ import se.lublin.mumla.Settings;
 import se.lublin.mumla.channel.AccessTokenFragment;
 import se.lublin.mumla.channel.ChannelFragment;
 import se.lublin.mumla.channel.ServerInfoFragment;
-import se.lublin.mumla.db.DatabaseCertificate;
 import se.lublin.mumla.db.DatabaseProvider;
 import se.lublin.mumla.db.MumlaDatabase;
 import se.lublin.mumla.db.MumlaSQLiteDatabase;
 import se.lublin.mumla.db.PublicServer;
-import se.lublin.mumla.preference.MumlaCertificateGenerateTask;
 import se.lublin.mumla.preference.Preferences;
 import se.lublin.mumla.servers.FavouriteServerListFragment;
 import se.lublin.mumla.servers.PublicServerListFragment;
@@ -100,8 +102,6 @@ import se.lublin.mumla.service.MumlaService;
 import se.lublin.mumla.util.HumlaServiceFragment;
 import se.lublin.mumla.util.HumlaServiceProvider;
 import se.lublin.mumla.util.MumlaTrustStore;
-
-import static se.lublin.mumla.Constants.TAG;
 
 public class MumlaActivity extends AppCompatActivity implements ListView.OnItemClickListener,
         FavouriteServerListFragment.ServerConnectHandler, HumlaServiceProvider, DatabaseProvider,
@@ -146,10 +146,10 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                 fragment.setServiceBound(true);
 
             // Re-show server list if we're showing a fragment that depends on the service.
-            if (getSupportFragmentManager().findFragmentById(R.id.content_frame) instanceof HumlaServiceFragment &&
-                    !mService.isConnected()) {
-                loadDrawerFragment(DrawerAdapter.ITEM_FAVOURITES);
-            }
+//            if (getSupportFragmentManager().findFragmentById(R.id.content_frame) instanceof HumlaServiceFragment &&
+//                    !mService.isConnected()) {
+//                loadDrawerFragment(DrawerAdapter.ITEM_FAVOURITES);
+//            }
             updateConnectionState(getService());
         }
 
@@ -303,7 +303,16 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                 loadDrawerFragment(getIntent().getIntExtra(EXTRA_DRAWER_FRAGMENT,
                         DrawerAdapter.ITEM_FAVOURITES));
             } else {
-                loadDrawerFragment(DrawerAdapter.ITEM_FAVOURITES);
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> {
+                    if (mService != null && mService.isConnected()) {
+                        Log.e(TAG,"Already connect to server");
+                    } else {
+                        connectToOurServer();
+                    }
+                }, 1500);
+                loadDrawerFragment(DrawerAdapter.ITEM_SERVER);
             }
         }
 
@@ -326,6 +335,11 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
         setVolumeControlStream(mSettings.isHandsetMode() ?
                 AudioManager.STREAM_VOICE_CALL : AudioManager.STREAM_MUSIC);
+    }
+
+    private void connectToOurServer() {
+        Server server = new Server(-1, "test server", "voip.swiftptt.com", 20005, "user", "123");
+        connectToServer(server);
     }
 
     @Override
