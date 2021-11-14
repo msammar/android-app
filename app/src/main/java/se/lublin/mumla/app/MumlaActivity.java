@@ -391,28 +391,28 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem disconnectButton = menu.findItem(R.id.action_disconnect);
-        disconnectButton.setVisible(mService != null && mService.isConnected());
-
-        // Color the action bar icons to the primary text color of the theme.
-        int foregroundColor = getSupportActionBar().getThemedContext()
-                .obtainStyledAttributes(new int[]{android.R.attr.textColor})
-                .getColor(0, -1);
-        for (int x = 0; x < menu.size(); x++) {
-            MenuItem item = menu.getItem(x);
-            if (item.getIcon() != null) {
-                Drawable icon = item.getIcon().mutate(); // Mutate the icon so that the color filter is exclusive to the action bar
-                icon.setColorFilter(foregroundColor, PorterDuff.Mode.MULTIPLY);
-            }
-        }
-
+//        MenuItem disconnectButton = menu.findItem(R.id.action_disconnect);
+//        disconnectButton.setVisible(mService != null && mService.isConnected());
+//
+//        // Color the action bar icons to the primary text color of the theme.
+//        int foregroundColor = getSupportActionBar().getThemedContext()
+//                .obtainStyledAttributes(new int[]{android.R.attr.textColor})
+//                .getColor(0, -1);
+//        for (int x = 0; x < menu.size(); x++) {
+//            MenuItem item = menu.getItem(x);
+//            if (item.getIcon() != null) {
+//                Drawable icon = item.getIcon().mutate(); // Mutate the icon so that the color filter is exclusive to the action bar
+//                icon.setColorFilter(foregroundColor, PorterDuff.Mode.MULTIPLY);
+//            }
+//        }
+//
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.mumla, menu);
+//        getMenuInflater().inflate(R.menu.mumla, menu);
         return true;
     }
 

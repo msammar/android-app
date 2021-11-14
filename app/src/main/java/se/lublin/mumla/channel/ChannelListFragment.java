@@ -227,8 +227,8 @@ public class ChannelListFragment extends HumlaServiceFragment implements OnChann
             muteItem.getIcon().mutate().setColorFilter(foregroundColor, PorterDuff.Mode.MULTIPLY);
             deafenItem.getIcon().mutate().setColorFilter(foregroundColor, PorterDuff.Mode.MULTIPLY);
 
-            MenuItem bluetoothItem = menu.findItem(R.id.menu_bluetooth);
-            bluetoothItem.setChecked(session.usingBluetoothSco());
+//            MenuItem bluetoothItem = menu.findItem(R.id.menu_bluetooth);
+//            bluetoothItem.setChecked(session.usingBluetoothSco());
         }
     }
 
@@ -236,42 +236,42 @@ public class ChannelListFragment extends HumlaServiceFragment implements OnChann
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_channel_list, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
-        final SearchView searchView = (SearchView)MenuItemCompat.getActionView(searchItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int i) {
-                return false;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int i) {
-                if (getService() == null || !getService().isConnected())
-                    return false;
-                CursorWrapper cursor = (CursorWrapper) searchView.getSuggestionsAdapter().getItem(i);
-                int typeColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA);
-                int dataIdColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_INTENT_DATA);
-                String itemType = cursor.getString(typeColumn);
-                int itemId = cursor.getInt(dataIdColumn);
-
-                IHumlaSession session = getService().HumlaSession();
-                if(ChannelSearchProvider.INTENT_DATA_CHANNEL.equals(itemType)) {
-                    if(session.getSessionChannel().getId() != itemId) {
-                        session.joinChannel(itemId);
-                    } else {
-                        scrollToChannel(itemId);
-                    }
-                    return true;
-                } else if(ChannelSearchProvider.INTENT_DATA_USER.equals(itemType)) {
-                    scrollToUser(itemId);
-                    return true;
-                }
-                return false;
-            }
-        });
+//        MenuItem searchItem = menu.findItem(R.id.menu_search);
+//        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+//
+//        final SearchView searchView = (SearchView)MenuItemCompat.getActionView(searchItem);
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+//        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+//            @Override
+//            public boolean onSuggestionSelect(int i) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onSuggestionClick(int i) {
+//                if (getService() == null || !getService().isConnected())
+//                    return false;
+//                CursorWrapper cursor = (CursorWrapper) searchView.getSuggestionsAdapter().getItem(i);
+//                int typeColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA);
+//                int dataIdColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_INTENT_DATA);
+//                String itemType = cursor.getString(typeColumn);
+//                int itemId = cursor.getInt(dataIdColumn);
+//
+//                IHumlaSession session = getService().HumlaSession();
+//                if(ChannelSearchProvider.INTENT_DATA_CHANNEL.equals(itemType)) {
+//                    if(session.getSessionChannel().getId() != itemId) {
+//                        session.joinChannel(itemId);
+//                    } else {
+//                        scrollToChannel(itemId);
+//                    }
+//                    return true;
+//                } else if(ChannelSearchProvider.INTENT_DATA_USER.equals(itemType)) {
+//                    scrollToUser(itemId);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -301,16 +301,16 @@ public class ChannelListFragment extends HumlaServiceFragment implements OnChann
                 getActivity().supportInvalidateOptionsMenu();
                 return true;
             }
-            case R.id.menu_search:
-                return false;
-            case R.id.menu_bluetooth:
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) {
-                    session.enableBluetoothSco();
-                } else {
-                    session.disableBluetoothSco();
-                }
-                return true;
+//            case R.id.menu_search:
+//                return false;
+//            case R.id.menu_bluetooth:
+//                item.setChecked(!item.isChecked());
+//                if (item.isChecked()) {
+//                    session.enableBluetoothSco();
+//                } else {
+//                    session.disableBluetoothSco();
+//                }
+//                return true;
         }
 
         return super.onOptionsItemSelected(item);
