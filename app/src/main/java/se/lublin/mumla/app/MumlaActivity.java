@@ -99,6 +99,7 @@ import se.lublin.mumla.servers.PublicServerListFragment;
 import se.lublin.mumla.servers.ServerEditFragment;
 import se.lublin.mumla.service.IMumlaService;
 import se.lublin.mumla.service.MumlaService;
+import se.lublin.mumla.splash.SplashDialogFragment;
 import se.lublin.mumla.util.HumlaServiceFragment;
 import se.lublin.mumla.util.HumlaServiceProvider;
 import se.lublin.mumla.util.MumlaTrustStore;
@@ -127,6 +128,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     private ProgressDialog mConnectingDialog;
     private AlertDialog mErrorDialog;
     private AlertDialog.Builder mDisconnectPromptBuilder;
+    private DialogFragment splashDialog;
 
     /**
      * List of fragments to be notified about service state changes.
@@ -162,6 +164,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     private HumlaObserver mObserver = new HumlaObserver() {
         @Override
         public void onConnected() {
+            splashDialog.dismiss();
             if (mSettings.shouldStartUpInPinnedMode()) {
                 loadDrawerFragment(DrawerAdapter.ITEM_PINNED_CHANNELS);
             } else {
@@ -246,6 +249,10 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Init splash dialog over screen
+        splashDialog = SplashDialogFragment.getInstance(MumlaActivity.this);
+        splashDialog.show(getSupportFragmentManager(), "splash_dialog");
+
         setStayAwake(mSettings.shouldStayAwake());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -308,6 +315,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                 handler.postDelayed(() -> {
                     if (mService != null && mService.isConnected()) {
                         Log.e(TAG,"Already connect to server");
+                        splashDialog.dismiss();
                     } else {
                         connectToOurServer();
                     }
