@@ -488,6 +488,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             mUserTalkHighlight = (ImageView) itemView.findViewById(R.id.user_row_talk_highlight);
             mUserName = (TextView) itemView.findViewById(R.id.user_row_name);
             mMoreButton = (ImageView) itemView.findViewById(R.id.user_row_more);
+            mMoreButton.setVisibility(View.GONE);
         }
     }
 
@@ -507,6 +508,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             mChannelUserCount = (TextView) itemView.findViewById(R.id.channel_row_count);
             mJoinButton = (ImageView) itemView.findViewById(R.id.channel_row_join);
             mMoreButton = (ImageView) itemView.findViewById(R.id.channel_row_more);
+            mMoreButton.setVisibility(View.GONE);
         }
     }
 
