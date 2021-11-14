@@ -24,12 +24,12 @@
         android:fragment="se.lublin.mumla.preference.Preferences$MumlaPreferenceFragment">
         <extra android:name="settings" android:value="general"></extra>
     </header>
-    <header
-        android:title="@string/authentication"
-        android:summary="@string/authenticationSum"
-        android:fragment="se.lublin.mumla.preference.Preferences$MumlaPreferenceFragment">
-        <extra android:name="settings" android:value="authentication"></extra>
-    </header>
+<!--    <header-->
+<!--        android:title="@string/authentication"-->
+<!--        android:summary="@string/authenticationSum"-->
+<!--        android:fragment="se.lublin.mumla.preference.Preferences$MumlaPreferenceFragment">-->
+<!--        <extra android:name="settings" android:value="authentication"></extra>-->
+<!--    </header>-->
     <header
         android:title="@string/audio"
         android:summary="@string/audioSum"
