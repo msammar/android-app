@@ -48,6 +48,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -103,6 +104,7 @@ import se.lublin.mumla.splash.SplashDialogFragment;
 import se.lublin.mumla.util.HumlaServiceFragment;
 import se.lublin.mumla.util.HumlaServiceProvider;
 import se.lublin.mumla.util.MumlaTrustStore;
+import se.lublin.mumla.view.LoginActivity;
 
 public class MumlaActivity extends AppCompatActivity implements ListView.OnItemClickListener,
         FavouriteServerListFragment.ServerConnectHandler, HumlaServiceProvider, DatabaseProvider,
@@ -125,10 +127,10 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     private Server mServerPendingPerm = null;
 
-    private ProgressDialog mConnectingDialog;
+    //private ProgressDialog mConnectingDialog;
     private AlertDialog mErrorDialog;
     private AlertDialog.Builder mDisconnectPromptBuilder;
-    private DialogFragment splashDialog;
+    //private DialogFragment splashDialog;
 
     /**
      * List of fragments to be notified about service state changes.
@@ -164,7 +166,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     private HumlaObserver mObserver = new HumlaObserver() {
         @Override
         public void onConnected() {
-            splashDialog.dismiss();
+            //splashDialog.dismiss();
             if (mSettings.shouldStartUpInPinnedMode()) {
                 loadDrawerFragment(DrawerAdapter.ITEM_PINNED_CHANNELS);
             } else {
@@ -229,15 +231,23 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                     KeyStore trustStore = MumlaTrustStore.getTrustStore(MumlaActivity.this);
                     trustStore.setCertificateEntry(alias, x509);
                     MumlaTrustStore.saveTrustStore(MumlaActivity.this, trustStore);
-                    Toast.makeText(MumlaActivity.this, R.string.trust_added, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MumlaActivity.this, R.string.trust_added, Toast.LENGTH_LONG).show();
                     connectToServer(lastServer);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(MumlaActivity.this, R.string.trust_add_failed, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MumlaActivity.this, R.string.trust_add_failed, Toast.LENGTH_LONG).show();
                 }
             } catch (CertificateException e) {
                 e.printStackTrace();
             }
+
+        }
+        @Override
+        public void onPermissionDenied(String reason) {
+            AlertDialog.Builder adb = new AlertDialog.Builder(MumlaActivity.this);
+            adb.setTitle(R.string.perm_denied);
+            adb.setMessage(reason);
+            adb.show();
         }
     };
 
@@ -250,8 +260,8 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         setContentView(R.layout.activity_main);
 
         //Init splash dialog over screen
-        splashDialog = SplashDialogFragment.getInstance(MumlaActivity.this);
-        splashDialog.show(getSupportFragmentManager(), "splash_dialog");
+        //splashDialog = SplashDialogFragment.getInstance(MumlaActivity.this);
+        //splashDialog.show(getSupportFragmentManager(), "splash_dialog");
 
         setStayAwake(mSettings.shouldStayAwake());
 
@@ -315,7 +325,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                 handler.postDelayed(() -> {
                     if (mService != null && mService.isConnected()) {
                         Log.e(TAG,"Already connect to server");
-                        splashDialog.dismiss();
+                       //splashDialog.dismiss();
                     } else {
                         connectToOurServer();
                     }
@@ -336,7 +346,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                         MumlaActivity.this, server, ServerEditFragment.Action.CONNECT_ACTION, true);
                 fragment.show(getSupportFragmentManager(), "url_edit");
             } catch (MalformedURLException e) {
-                Toast.makeText(this, getString(R.string.mumble_url_parse_failed), Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, getString(R.string.mumble_url_parse_failed), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
         }
@@ -346,8 +356,16 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     }
 
     private void connectToOurServer() {
-        Server server = new Server(-1, "test server", "voip.swiftptt.com", 20005, "user", "123");
-        connectToServer(server);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences!=null){
+            String host = sharedPreferences.getString(mSettings.SERVER_ADDRESS, "");
+            int port = Integer.parseInt(sharedPreferences.getString(mSettings.SERVER_PORT, ""));
+            String userName = sharedPreferences.getString(mSettings.USERNAME, "");
+            String password = sharedPreferences.getString(mSettings.USER_PASSWORD, "");
+            String name = sharedPreferences.getString(mSettings.NETWORK_NAME, "");
+            Server server = new Server(-1, name, host, port, userName, password);
+            connectToServer(server);
+        }
     }
 
     @Override
@@ -368,8 +386,8 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         super.onPause();
         if (mErrorDialog != null)
             mErrorDialog.dismiss();
-        if (mConnectingDialog != null)
-            mConnectingDialog.dismiss();
+        //if (mConnectingDialog != null)
+        //    mConnectingDialog.dismiss();
 
         if (mService != null) {
             for (HumlaServiceFragment fragment : mServiceFragments) {
@@ -391,8 +409,8 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem disconnectButton = menu.findItem(R.id.action_disconnect);
-        disconnectButton.setVisible(mService != null && mService.isConnected());
+        //MenuItem disconnectButton = menu.findItem(R.id.action_disconnect);
+        //disconnectButton.setVisible(mService != null && mService.isConnected());
 //
 //        // Color the action bar icons to the primary text color of the theme.
 //        int foregroundColor = getSupportActionBar().getThemedContext()
@@ -412,7 +430,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.mumla, menu);
+        //getMenuInflater().inflate(R.menu.mumla, menu);
         return true;
     }
 
@@ -493,6 +511,14 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                 Intent prefIntent = new Intent(this, Preferences.class);
                 startActivity(prefIntent);
                 return;
+            case DrawerAdapter.ITEM_ADMIN:
+                Uri uri1 = Uri.parse("https://swiftptt.com/auth/login"); // missing 'http://' will cause crashed
+                Intent intent1 = new Intent(Intent.ACTION_VIEW, uri1);
+                startActivity(intent1);
+                return;
+            case DrawerAdapter.ITEM_LOGOUT:
+                logout();
+                return;
             default:
                 return;
         }
@@ -562,7 +588,24 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         ServerConnectTask connectTask = new ServerConnectTask(this, mDatabase);
         connectTask.execute(server);
     }
-
+    private void logout() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(Settings.PREF_IS_LOGGED_IN, false);
+        editor.putString(Settings.ACCESS_TOKEN, "");
+        editor.putString(Settings.USERNAME, "");
+        editor.putString(Settings.USER_PASSWORD, "");
+        editor.putString(Settings.SERVER_PORT, "");
+        editor.putString(Settings.SERVER_ADDRESS, "");
+        editor.apply();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        if (mService != null)
+            mService.disconnect();
+        mSettings.setFirstRun(true);
+        finish();
+    }
     private boolean isPortOpen(final String host, final int port, final int timeout) {
         final AtomicBoolean open = new AtomicBoolean(false);
         try {
@@ -600,8 +643,8 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                     Log.w(TAG, "No pending server after record audio permission was granted");
                 }
             } else {
-                Toast.makeText(MumlaActivity.this, getString(R.string.grant_perm_microphone),
-                        Toast.LENGTH_LONG).show();
+                //.makeText(MumlaActivity.this, getString(R.string.grant_perm_microphone),
+                 //       Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -650,30 +693,30 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
      * @param service A bound IHumlaService.
      */
     private void updateConnectionState(IHumlaService service) {
-        if (mConnectingDialog != null)
-            mConnectingDialog.dismiss();
+        //if (mConnectingDialog != null)
+         //   mConnectingDialog.dismiss();
         if (mErrorDialog != null)
             mErrorDialog.dismiss();
 
         switch (mService.getConnectionState()) {
             case CONNECTING:
                 Server server = service.getTargetServer();
-                mConnectingDialog = new ProgressDialog(this);
-                mConnectingDialog.setIndeterminate(true);
-                mConnectingDialog.setCancelable(true);
-                mConnectingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        mService.disconnect();
-                        Toast.makeText(MumlaActivity.this, R.string.cancelled,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                //mConnectingDialog = new ProgressDialog(this);
+                //mConnectingDialog.setIndeterminate(true);
+                //mConnectingDialog.setCancelable(true);
+                //mConnectingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                //    @Override
+                 //   public void onCancel(DialogInterface dialog) {
+                 //       mService.disconnect();
+                 //       Toast.makeText(MumlaActivity.this, R.string.cancelled,
+                 //               Toast.LENGTH_SHORT).show();
+                //    }
+               // });
                 // SRV lookup is done later, so we no longer show the port (and
                 // only the configured hostname)
-                mConnectingDialog.setMessage(getString(R.string.connecting_to_server, server.getHost())
-                        + (mSettings.isTorEnabled() ? " (Tor)" : ""));
-                mConnectingDialog.show();
+                //mConnectingDialog.setMessage(getString(R.string.connecting_to_server, server.getHost())
+                //        + (mSettings.isTorEnabled() ? " (Tor)" : ""));
+                //mConnectingDialog.show();
                 break;
             case CONNECTION_LOST:
                 // Only bother the user if the error hasn't already been shown.

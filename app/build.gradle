@@ -53,17 +53,17 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion '29.0.3'
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 21
         // TODO bumping to 30 will break writing to external storage, see
         // requestLegacyExternalStorage in app/src/main/AndroidManifest.xml
-        targetSdkVersion 29
+        targetSdkVersion 30
         multiDexEnabled true
 
-        applicationId "se.lublin.mumla"
+        applicationId "com.swiftptt"
         versionCode 92
         versionName gitDescribe()
 
@@ -77,15 +77,15 @@ android {
     productFlavors {
         official {
             dimension "release"
-            applicationId "se.lublin.mumla"
+            applicationId "com.swiftptt"
         }
         donation {
             dimension "release"
-            applicationId "se.lublin.mumla.donation"
+            applicationId "com.swiftptt.donation"
         }
         beta {
             dimension "release"
-            applicationId "se.lublin.mumla.beta"
+            applicationId "com.swiftptt.beta"
         }
     }
 
@@ -147,4 +147,16 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'info.guardianproject.netcipher:netcipher:2.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    // Moshi
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 }

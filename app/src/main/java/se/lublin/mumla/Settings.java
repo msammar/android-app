@@ -171,7 +171,17 @@ public class Settings {
 
     public static final String PREF_START_UP_IN_PINNED_MODE = "startUpInPinnedMode";
     public static final boolean DEFAULT_START_UP_IN_PINNED_MODE = false;
-
+    public static final String PREF_IS_LOGGED_IN = "IS_LOGGED_IN";
+    public static final boolean DEFAULT_IS_LOGGED_IN = false;
+    /** Access token key. */
+    public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
+    public static final String SERVER_PORT = "SERVER_PORT";
+    public static final String SERVER_ADDRESS = "SERVER_ADDRESS";
+    public static final String USER_PASSWORD = "USER_PASSWORD";
+    public static final String USERNAME = "USERNAME";
+    public static final String NETWORK_NAME = "NETWORK_NAME";
+    public static final String LATITUDE = "LATITUDE";
+    public static final String LONGITUDE = "LONGITUDE";
     static {
         ARRAY_INPUT_METHODS = new HashSet<String>();
         ARRAY_INPUT_METHODS.add(ARRAY_INPUT_METHOD_VOICE);
@@ -463,5 +473,8 @@ public class Settings {
 
     public boolean shouldStartUpInPinnedMode() {
         return preferences.getBoolean(PREF_START_UP_IN_PINNED_MODE, DEFAULT_START_UP_IN_PINNED_MODE);
+    }
+    public boolean isLoggedIn() {
+        return preferences.getBoolean(PREF_IS_LOGGED_IN, DEFAULT_IS_LOGGED_IN);
     }
 }

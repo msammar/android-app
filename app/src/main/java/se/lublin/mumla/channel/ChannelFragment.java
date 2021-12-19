@@ -163,7 +163,9 @@ public class ChannelFragment extends HumlaServiceFragment implements SharedPrefe
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        getService().onTalkKeyDown();
+                        IHumlaSession session = getService().HumlaSession();
+                        if (!session.isTalking()) {
+                        getService().onTalkKeyDown();}
                         break;
                     case MotionEvent.ACTION_UP:
                         getService().onTalkKeyUp();
